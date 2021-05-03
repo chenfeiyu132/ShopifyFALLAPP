@@ -15,12 +15,8 @@
 
 2. Peacock is the last name of the employee with the most orders(40)
 
-`SELECT EmployeeID, COUNT(*) FROM Orders GROUP BY EmployeeID ORDER BY COUNT(*) DESC` - Used to find the number of orders ranked by largest to smallest
-
-`SELECT * FROM Employees WHERE EmployeeID = 4` - Used to find the Employee info with ID 4 since this was the employeeID with most order count
+`SELECT LastName, MAX(orderCounts) FROM Employees e INNER JOIN(SELECT EmployeeID, COUNT(*) AS orderCounts FROM Orders GROUP BY EmployeeID) o ON e.EmployeeID = o.EmployeeID` - Used to find the order amount and last name of the employee with most orders
 
 3. Boston Crab Meat is the product ordered the most by customers in Germany
 
-`SELECT ProductID, SUM(Quantity) FROM OrderDetails WHERE OrderID IN (SELECT OrderID FROM Orders WHERE CustomerID IN (SELECT CustomerID FROM Customers WHERE Country = 'Germany')) GROUP BY ProductID ORDER BY SUM(Quantity) DESC` - Finds the largest total quantity of products ordered by customers from Germany
-
-`SELECT * FROM Products WHERE ProductID = 40` - Finds the product associated with ProductID 40(which has the largest total quantity found by the preivous query)
+`SELECT ProductName FROM Products p INNER JOIN (SELECT ProductID, MAX(Total) FROM(SELECT ProductID, SUM(Quantity) AS Total FROM OrderDetails WHERE OrderID IN (SELECT OrderID FROM Orders WHERE CustomerID IN (SELECT CustomerID FROM Customers WHERE Country = 'Germany')) GROUP BY ProductID)) m ON p.ProductID = m.ProductID` - Finds the Product Name from Products with ProductID matching the one that has the max quantity in terms of order amounts. 
